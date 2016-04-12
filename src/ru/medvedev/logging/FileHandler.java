@@ -33,8 +33,21 @@ public class FileHandler implements Handler {
         this.fullPath = fullPath;
     }
 
+    private String makeFormatString(Record record) {
+        String result = "";
+        result += record.getNum();
+        result += ": " + record.getDate();
+        result += " --- " + record.getLevel();
+        result += ": " + record.getMessage();
+        return result;
+    }
+
     @Override
     public void publish(Record record) {
-
+        try {
+            this.write(makeFormatString(record));
+        } catch (IOException e) {
+            new Logger().log(Level.warning, "Ошибка ввода/вывода");
+        }
     }
 }
