@@ -6,6 +6,8 @@ import java.util.Date;
  * Created by Сергей on 12.04.2016.
  */
 public class Record {
+    private static int index = 0;
+
     private Level level;
     private String message;
     private Date date;
@@ -30,5 +32,7 @@ public class Record {
     public Record(Level level, String message) {
         this.level = level;
         this.message = message;
+        this.date = new Date();
+        this.num = index++;
     }
 }

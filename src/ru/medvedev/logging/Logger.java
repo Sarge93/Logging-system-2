@@ -39,10 +39,27 @@ public class Logger {
         handlers.add(handler);
     }
 
+    public ArrayList<Handler> getHandlers() {
+        return handlers;
+    }
+
     public void log(Level level, String lodMsg) {
         if (level.ordinal() < defaulLevel.ordinal()) {
             return;
         }
         Record record = new Record(level, lodMsg);
+        if ((filter != null) && (!filter.isLoggable(record))) {
+            return;
+        }
+
+        Logger logger = this;
+
+        while (logger != null) {
+            ArrayList<Handler> handlers = logger.getHandlers();
+            for (Handler handler : handlers) {
+
+            }
+        }
+
     }
 }

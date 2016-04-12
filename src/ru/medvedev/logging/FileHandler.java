@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 /**
  * Created by Сергей on 12.04.2016.
  */
-public class FileHandler extends Handler {
+public class FileHandler implements Handler {
 
     private String fullPath;
 
@@ -31,5 +31,10 @@ public class FileHandler extends Handler {
 
     public FileHandler(String fullPath) throws IOException {
         this.fullPath = fullPath;
+    }
+
+    @Override
+    public void publish(Record record) {
+
     }
 }
