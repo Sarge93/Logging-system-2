@@ -1,6 +1,7 @@
 package ru.medvedev.logging;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -18,11 +19,14 @@ public class FileHandler implements Handler {
             if(!file.exists()){
                 file.createNewFile();
             }
-            PrintWriter out = new PrintWriter(file.getAbsoluteFile());
+
+            FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(),true);
             try {
-                out.print(text);
+                fileWriter.write(text);
+                fileWriter.write("\r\n");
+
             } finally {
-                out.close();
+                fileWriter.close();
             }
         } catch(IOException e) {
             throw new RuntimeException(e);

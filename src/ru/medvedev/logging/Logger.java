@@ -24,9 +24,13 @@ public class Logger {
         return logger;
     }
 
-    public Logger(String name) {
-        this.name = name;
+    public Logger() {
         defaulLevel = Level.info;
+    }
+
+    public Logger(String name) {
+        this();
+        this.name = name;
     }
 
     public void setFilter(Filter filter) {
