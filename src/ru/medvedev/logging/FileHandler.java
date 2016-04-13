@@ -47,7 +47,7 @@ public class FileHandler implements Handler {
         try {
             this.write(makeFormatString(record));
         } catch (IOException e) {
-            new Logger().log(Level.warning, "Ошибка ввода/вывода");
+            Logger.createLogger(getClass().getName()).log(Level.warning, "Ошибка ввода/вывода");
         }
     }
 }

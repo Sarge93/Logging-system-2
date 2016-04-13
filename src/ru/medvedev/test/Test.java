@@ -1,7 +1,10 @@
 package ru.medvedev.test;
 
 import ru.medvedev.logging.*;
+import ru.medvedev.logging.ConsoleHandler;
 import ru.medvedev.logging.FileHandler;
+import ru.medvedev.logging.Handler;
+import ru.medvedev.logging.Level;
 import ru.medvedev.logging.Logger;
 import java.io.IOException;
 
@@ -12,14 +15,13 @@ import java.util.logging.*;
  */
 public class Test {
     public static void main(String[] args) {
-        Logger logger = new Logger();
-        String path = "Q://loglog/a.txt";
-
-        try {
-            FileHandler fileHandler = new FileHandler(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Logger logger = Logger.createLogger(Test.class.getName());
+        int a = 3;
+        int b = 4;
+        int c = a + b;
+        Handler handler = new ConsoleHandler();
+        logger.addHandler(handler);
+        logger.log(Level.info, "Sum of a and b is complete");
 
     }
 }

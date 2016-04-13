@@ -14,17 +14,19 @@ public class Logger {
     private Logger parent;
     private Level defaulLevel;
 
-    public Logger(String name, Level defaulLevel) {
-        this.name = name;
-        this.defaulLevel = defaulLevel;
+    public String getName() {
+        return name;
+    }
+
+    public static Logger createLogger(String name) {
+        LogManager logManager = LogManager.getLogManager();
+        Logger logger = logManager.getLogger(name);
+        return logger;
     }
 
     public Logger(String name) {
-        this(name, Level.info);
-    }
-
-    public Logger() {
-        this(Reflection.getCallerClass().getName());
+        this.name = name;
+        defaulLevel = Level.info;
     }
 
     public void setFilter(Filter filter) {
@@ -36,6 +38,7 @@ public class Logger {
     }
 
     public void addHandler(Handler handler) {
+
         handlers.add(handler);
     }
 
@@ -57,8 +60,9 @@ public class Logger {
         while (logger != null) {
             ArrayList<Handler> handlers = logger.getHandlers();
             for (Handler handler : handlers) {
-
+                handler.publish(record);
             }
+            logger = null;
         }
 
     }
