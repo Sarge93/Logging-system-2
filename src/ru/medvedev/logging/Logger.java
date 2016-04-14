@@ -12,7 +12,7 @@ public class Logger {
     private ArrayList<Handler> handlers = new ArrayList<Handler>();
     private Filter filter;
     private Logger parent;
-    private Level defaulLevel;
+    private Level loggerLevel;
 
     public String getName() {
         return name;
@@ -25,7 +25,7 @@ public class Logger {
     }
 
     public Logger() {
-        defaulLevel = Level.info;
+        loggerLevel = LogManager.getLogManager().getDefaultLevel();
     }
 
     public Logger(String name) {
@@ -51,7 +51,7 @@ public class Logger {
     }
 
     public void log(Level level, String lodMsg) {
-        if (level.ordinal() < defaulLevel.ordinal()) {
+        if (level.ordinal() < loggerLevel.ordinal()) {
             return;
         }
         Record record = new Record(level, lodMsg);
@@ -63,11 +63,42 @@ public class Logger {
 
         while (logger != null) {
             ArrayList<Handler> handlers = logger.getHandlers();
+            if (handlers.isEmpty()) handlers.add(new ConsoleHandler());
             for (Handler handler : handlers) {
-                handler.publish(record);
+                handler.publish(logger, record);
             }
             logger = null;
         }
 
+    }
+
+    public void log(Level level, Exception ex) {
+        if (level.ordinal() < loggerLevel.ordinal()) {
+            return;
+        }
+        Record record = new Record(level, transformExeption(ex));
+        if ((filter != null) && (!filter.isLoggable(record))) {
+            return;
+        }
+
+        Logger logger = this;
+
+        while (logger != null) {
+            ArrayList<Handler> handlers = logger.getHandlers();
+            if (handlers.isEmpty()) handlers.add(new ConsoleHandler());
+            for (Handler handler : handlers) {
+                handler.publish(logger, record);
+            }
+            logger = null;
+        }
+
+    }
+
+    private String transformExeption(Exception ex) {
+        String result = "";
+        result += ex.getMessage();
+        result += "\n" + ex.getLocalizedMessage();
+        result += "\n" + ex.getStackTrace();
+        return result;
     }
 }

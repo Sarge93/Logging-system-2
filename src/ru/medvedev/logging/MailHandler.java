@@ -11,13 +11,7 @@ import java.util.Properties;
  */
 public class MailHandler {
     static final String ENCODING = "UTF-8";
-    String subject = "Subject";
-    String content = "Test";
-    String smtpHost = "smtp.rambler.ru";
-    String address = "test@rambler.ru";
-    String login = "test";
-    String password = "test";
-    String smtpPort = "25";
+
 
     public static void sendSimpleMessage(String login, String password, String from, String to, String content, String subject, String smtpPort, String smtpHost)
             throws MessagingException, UnsupportedEncodingException {
@@ -30,12 +24,17 @@ public class MailHandler {
         props.put("mail.mime.charset", ENCODING);
         Session session = Session.getDefaultInstance(props, auth);
 
+        System.out.println("1");
+
         Message msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress(from));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
         msg.setSubject(subject);
         msg.setText(content);
+
+        System.out.println('2');
         Transport.send(msg);
+        System.out.println("3");
     }
 
     static class MyAuthenticator extends Authenticator {

@@ -15,7 +15,7 @@ public class ConsoleHandler implements Handler {
     }
 
     @Override
-    public void publish(Record record) {
+    public void publish(Logger logger, Record record) {
         System.out.println(makeFormatString(record));
     }
 }

@@ -107,7 +107,7 @@ public class HtmlHandler implements Handler {
 
 
     @Override
-    public void publish(Record record) {
+    public void publish(Logger logger, Record record) {
         try {
             this.write(makeFormatString(record));
         } catch (IOException e) {

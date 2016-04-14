@@ -12,7 +12,7 @@ public class FileHandler implements Handler {
 
     private String fullPath;
 
-    public void write(String text) throws IOException {
+    private void write(String text) throws IOException {
         File file = new File(fullPath);
 
         try {
@@ -47,7 +47,7 @@ public class FileHandler implements Handler {
     }
 
     @Override
-    public void publish(Record record) {
+    public void publish(Logger logger, Record record) {
         try {
             this.write(makeFormatString(record));
         } catch (IOException e) {
