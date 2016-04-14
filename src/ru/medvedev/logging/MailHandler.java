@@ -9,7 +9,7 @@ import java.util.Properties;
 /**
  * Created by Сергей on 12.04.2016.
  */
-public class MailHandler {
+public class MailHandler implements Handler {
     static final String ENCODING = "UTF-8";
 
 
@@ -32,9 +32,25 @@ public class MailHandler {
         msg.setSubject(subject);
         msg.setText(content);
 
-        System.out.println('2');
         Transport.send(msg);
-        System.out.println("3");
+    }
+
+    @Override
+    public void publish(Logger logger, Record record) {
+        String subject = "Subject";
+        String content = "Test";
+        String smtpHost="smtp.yandex.ru";
+        String address="golovatanya@rambler.ru";
+        String login="sarge93";
+        String password="";
+        String smtpPort="465";
+        try {
+            sendSimpleMessage(login,password,"sarge93@yandex.ru",address,content,subject,smtpPort,smtpHost);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     static class MyAuthenticator extends Authenticator {

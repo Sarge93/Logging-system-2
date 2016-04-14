@@ -18,8 +18,15 @@ import java.io.UnsupportedEncodingException;
 public class Test {
     public static void main(String[] args) {
         Logger logger = Logger.createLogger(Test.class.getName());
-        logger.log(Level.info,"Help us!");
-        Exception exception = new Exception();
+        logger.log(Level.info, "lalala");
+        Logger logger2 = Logger.createLogger(Test.class.getName()+"2");
+        logger2.log(Level.info, "lalala");
+        Logger logger3 = Logger.createLogger(Test.class.getName()+"3");
+        logger3.addHandler(new MailHandler());
+        logger3.log(Level.info, "lalala");
+//        Logger logger = Logger.createLogger(Test.class.getName());
+//        logger.log(Level.info,"Help us!");
+//        Exception exception = new Exception();
 //        Logger logger = Logger.createLogger(Test.class.getName());
 //
 //        int a = 3;
