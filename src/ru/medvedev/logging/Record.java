@@ -35,4 +35,6 @@ public class Record {
         this.date = new Date();
         this.num = index++;
     }
+
+
 }

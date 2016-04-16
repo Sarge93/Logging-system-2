@@ -2,6 +2,7 @@ package ru.medvedev.logging;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -12,14 +13,16 @@ import java.util.Properties;
 public class LogManager {
     private final static LogManager logManager = new LogManager();
 
-    private ArrayList<Logger> loggers;
+    private HashMap<String, Logger> loggers;
     private File propertiesFile;
     private Properties settings;
-    private Level defaultLevel;
-    private boolean config = false;
+    private static Level defaultLevel;
+    private static Logger rootLogger;
 
 
-     {
+    {
+        rootLogger = new Logger("rootLogger");
+        rootLogger.addHandler(new ConsoleHandler());
         String userDir = System.getProperty("user.home");
         File propertiesDir = new File(userDir, ".prop");
         if (!propertiesDir.exists()) propertiesDir.mkdir();
@@ -44,6 +47,16 @@ public class LogManager {
 
         }
 
+        defaultLevel = Level.stringToLevel(settings.getProperty("level"));
+        HashMap<String, Logger> temp = new HashMap<>();
+        int numberOfLoggers = Integer.parseInt(settings.getProperty("loggers"));
+        for (int i = 0; i < numberOfLoggers; i++) {
+            String n = settings.getProperty(Integer.valueOf(i).toString());
+            temp.put(n, new Logger(n));
+        }
+        loggers = temp;
+        temp = null;
+
     }
 
     private LogManager() {}
@@ -53,22 +66,11 @@ public class LogManager {
     }
 
     Logger getLogger(String name) {
-        if (!config) {
-            defaultLevel = Level.stringToLevel(settings.getProperty("level"));
-            ArrayList<Logger> temp = new ArrayList<Logger>();
-            int numberOfLoggers = Integer.parseInt(settings.getProperty("loggers"));
-            for (int i = 0; i < numberOfLoggers; i++) {
-                String n = settings.getProperty(Integer.valueOf(i).toString());
-                temp.add(new Logger(n));
-            }
-            loggers = temp;
-            temp = null;
-            config = true;
-        }
-        Logger resultLogger = findLogger(name);
+
+        Logger resultLogger = loggers.get(name);
         if (resultLogger == null) {
             resultLogger = new Logger(name);
-            loggers.add(resultLogger);
+            loggers.put(name, resultLogger);
             int numberOfLoggers = Integer.parseInt(settings.getProperty("loggers"));
             settings.put("loggers",Integer.valueOf(numberOfLoggers + 1).toString());
             settings.put(Integer.valueOf(numberOfLoggers).toString(), name);
@@ -86,17 +88,12 @@ public class LogManager {
         return resultLogger;
     }
 
-    private Logger findLogger(String name) {
-        for (Logger logger : loggers) {
-            if (logger.getName().equals(name)) {
-                return logger;
-            }
-        }
-        return null;
+    public static Level getDefaultLevel() {
+        return defaultLevel;
     }
 
-    public Level getDefaultLevel() {
-        return defaultLevel;
+    public static Logger getRootLogger() {
+        return rootLogger;
     }
 
 }

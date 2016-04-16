@@ -38,12 +38,12 @@ public class FileHandler implements Handler {
     }
 
     private String makeFormatString(Record record) {
-        String result = "";
-        result += record.getNum();
-        result += ": " + record.getDate();
-        result += " --- " + record.getLevel();
-        result += ": " + record.getMessage();
-        return result;
+        StringBuilder result = new StringBuilder();
+        result.append(record.getNum());
+        result.append(": " + record.getDate());
+        result.append(" --- " + record.getLevel());
+        result.append(": " + record.getMessage());
+        return result.toString();
     }
 
     @Override

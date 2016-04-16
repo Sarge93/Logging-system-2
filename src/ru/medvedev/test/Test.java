@@ -22,8 +22,8 @@ public class Test {
         Logger logger2 = Logger.createLogger(Test.class.getName()+"2");
         logger2.log(Level.info, "lalala");
         Logger logger3 = Logger.createLogger(Test.class.getName()+"3");
-        logger3.addHandler(new MailHandler());
         logger3.log(Level.info, "lalala");
+        System.out.println(logger.getParent().getName());
 //        Logger logger = Logger.createLogger(Test.class.getName());
 //        logger.log(Level.info,"Help us!");
 //        Exception exception = new Exception();

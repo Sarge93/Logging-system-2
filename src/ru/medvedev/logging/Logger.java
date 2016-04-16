@@ -1,6 +1,5 @@
 package ru.medvedev.logging;
 
-import sun.reflect.Reflection;
 
 import java.util.ArrayList;
 
@@ -24,13 +23,14 @@ public class Logger {
         return logger;
     }
 
-    public Logger() {
-        loggerLevel = LogManager.getLogManager().getDefaultLevel();
+    private Logger() {
+        loggerLevel = LogManager.getDefaultLevel();
     }
 
     public Logger(String name) {
         this();
         this.name = name;
+        this.parent = LogManager.getRootLogger();
     }
 
     public void setFilter(Filter filter) {
@@ -50,6 +50,7 @@ public class Logger {
         return handlers;
     }
 
+
     public void log(Level level, String lodMsg) {
         if (level.ordinal() < loggerLevel.ordinal()) {
             return;
@@ -59,16 +60,7 @@ public class Logger {
             return;
         }
 
-        Logger logger = this;
-
-        while (logger != null) {
-            ArrayList<Handler> handlers = logger.getHandlers();
-            if (handlers.isEmpty()) handlers.add(new ConsoleHandler());
-            for (Handler handler : handlers) {
-                handler.publish(logger, record);
-            }
-            logger = null;
-        }
+        doLog(record);
 
     }
 
@@ -80,25 +72,87 @@ public class Logger {
         if ((filter != null) && (!filter.isLoggable(record))) {
             return;
         }
+        doLog(record);
+    }
 
+    private void doLog(Record record) {
         Logger logger = this;
 
         while (logger != null) {
             ArrayList<Handler> handlers = logger.getHandlers();
-            if (handlers.isEmpty()) handlers.add(new ConsoleHandler());
             for (Handler handler : handlers) {
                 handler.publish(logger, record);
             }
-            logger = null;
+            logger = logger.getParent();
         }
-
     }
+
+    public void debug3(String message) {
+        log(Level.debug3, message);
+    }
+
+    public void debug3(Exception message) {
+        log(Level.debug3, message);
+    }
+
+    public void debug2(String message) {
+        log(Level.debug2, message);
+    }
+
+    public void debug2(Exception message) {
+        log(Level.debug2, message);
+    }
+
+    public void debug1(String message) {
+        log(Level.debug1, message);
+    }
+
+    public void debug1(Exception message) {
+        log(Level.debug1, message);
+    }
+
+    public void info(String message) {
+        log(Level.info, message);
+    }
+
+    public void info(Exception message) {
+        log(Level.info, message);
+    }
+
+    public void warning(String message) {
+        log(Level.warning, message);
+    }
+
+    public void warning(Exception message) {
+        log(Level.warning, message);
+    }
+
+    public void severe(String message) {
+        log(Level.severe, message);
+    }
+
+    public void severe(Exception message) {
+        log(Level.severe, message);
+    }
+
 
     private String transformExeption(Exception ex) {
-        String result = "";
-        result += ex.getMessage();
-        result += "\n" + ex.getLocalizedMessage();
-        result += "\n" + ex.getStackTrace();
-        return result;
+        StringBuilder result = new StringBuilder();
+        result.append(ex.getMessage());
+        result.append("\n" + ex.getLocalizedMessage());
+        result.append("\n" + ex.getStackTrace());
+        return result.toString();
     }
+
+    public Logger getParent() {
+        return parent;
+    }
+
+    public void setParent(Logger parent) {
+        if (parent == null) throw new NullPointerException();
+
+        this.parent = parent;
+    }
+
+
 }
