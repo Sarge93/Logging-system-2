@@ -18,6 +18,7 @@ public class LogManager {
     private Properties settings;
     private static Level defaultLevel;
     private static Logger rootLogger;
+    private static boolean updateConfig = true;
 
 
     {
@@ -96,4 +97,11 @@ public class LogManager {
         return rootLogger;
     }
 
+    public static boolean isUpdateConfig() {
+        return updateConfig;
+    }
+
+    public static void setUpdateConfig(boolean updateConfig) {
+        LogManager.updateConfig = updateConfig;
+    }
 }

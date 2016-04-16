@@ -79,6 +79,12 @@ public class Logger {
         Logger logger = this;
 
         while (logger != null) {
+            if ((logger.getFilter() != null) && (!logger.getFilter().isLoggable(record))) {
+                return;
+            }
+            if (record.getLevel().ordinal() < logger.getLoggerLevel().ordinal()) {
+                return;
+            }
             ArrayList<Handler> handlers = logger.getHandlers();
             for (Handler handler : handlers) {
                 handler.publish(logger, record);
@@ -154,5 +160,11 @@ public class Logger {
         this.parent = parent;
     }
 
+    public Level getLoggerLevel() {
+        return loggerLevel;
+    }
 
+    public void setLoggerLevel(Level loggerLevel) {
+        this.loggerLevel = loggerLevel;
+    }
 }
