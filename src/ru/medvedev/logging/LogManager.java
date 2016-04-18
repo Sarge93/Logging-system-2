@@ -18,12 +18,15 @@ public class LogManager {
     private Properties settings;
     private static Level defaultLevel;
     private static Logger rootLogger;
-    private static boolean updateConfig = true;
+    private static boolean updateConfig = false;
 
 
     {
         rootLogger = new Logger("rootLogger");
-        rootLogger.addHandler(new ConsoleHandler());
+        //rootLogger.addHandler(new ConsoleHandler());
+    }
+
+    public void readConfiguration() {
         String userDir = System.getProperty("user.home");
         File propertiesDir = new File(userDir, ".prop");
         if (!propertiesDir.exists()) propertiesDir.mkdir();
@@ -49,8 +52,8 @@ public class LogManager {
 
         }
 
-        defaultLevel = Level.stringToLevel(settings.getProperty("level"));
-        rootLogger.setLoggerLevel(Level.stringToLevel(settings.getProperty("level")));
+        defaultLevel = Level.stringToLevel(settings.getProperty(".level"));
+        rootLogger.setLoggerLevel(Level.stringToLevel(settings.getProperty(".level")));
 //        String[] h = separateClasses(settings.getProperty("handlers"));
 //        for (String s : h) {
 //            s = s.trim();
@@ -65,6 +68,7 @@ public class LogManager {
 //                e.printStackTrace();
 //            }
 //        }
+
         String[] l = separateClasses(settings.getProperty("loggers"));
         HashMap<String, Logger> temp = new HashMap<>();
         for (String s : l) {
@@ -77,7 +81,15 @@ public class LogManager {
                     Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s1);
                     Handler hand = (Handler) clz.newInstance();
                     if (hand instanceof FileHandler) {
-
+                        FileHandler filehandler = (FileHandler) hand;
+                        filehandler.setFullPath(getStringProperty(s+"."+s1+".fullpath", System.getProperty("java.io.tmpdir")));
+                        filehandler.setFormatter(getFormatterProperty(s+"."+s1+".fullpath", new SimpleFormatter()));
+                        logger.addHandler(filehandler);
+                    }
+                    if (hand instanceof ConsoleHandler) {
+                        ConsoleHandler consoleHandler = (ConsoleHandler) hand;
+                        consoleHandler.setFormatter(getFormatterProperty(s+"."+s1+".fullpath", new SimpleFormatter()));
+                        logger.addHandler(consoleHandler);
                     }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -91,7 +103,6 @@ public class LogManager {
         }
         loggers = temp;
         temp = null;
-
     }
 
     private LogManager() {}
@@ -167,4 +178,8 @@ public class LogManager {
             }
         return defaultValue;
     }
- }
+
+    public HashMap<String, Logger> getLoggers() {
+        return loggers;
+    }
+}

@@ -71,4 +71,12 @@ public class FileHandler implements Handler {
     public void setFormatter(Formatter formatter) {
         this.formatter = formatter;
     }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
+    }
 }

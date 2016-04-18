@@ -10,6 +10,8 @@ import ru.medvedev.logging.Logger;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -17,13 +19,11 @@ import java.io.UnsupportedEncodingException;
  */
 public class Test {
     public static void main(String[] args) {
-        Logger logger = Logger.createLogger(Test.class.getName());
-        logger.log(Level.info, "lalala");
-        Logger logger2 = Logger.createLogger(Test.class.getName()+"2");
-        logger2.log(Level.info, "lalala");
-        Logger logger3 = Logger.createLogger(Test.class.getName()+"3");
-        logger3.log(Level.info, "lalala");
-        System.out.println(logger.getParent().getName());
+        LogManager.getLogManager().readConfiguration();
+        HashMap<String, Logger> hashMap = LogManager.getLogManager().getLoggers();
+        for (Map.Entry<String, Logger> entry: hashMap.entrySet())
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+
 //        Logger logger = Logger.createLogger(Test.class.getName());
 //        logger.log(Level.info,"Help us!");
 //        Exception exception = new Exception();
