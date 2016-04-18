@@ -79,4 +79,12 @@ public class FileHandler implements Handler {
     public void setFullPath(String fullPath) {
         this.fullPath = fullPath;
     }
+
+    @Override
+    public String toString() {
+        return "FileHandler{" +
+                "fullPath='" + fullPath + '\'' +
+                ", formatter=" + formatter +
+                '}';
+    }
 }

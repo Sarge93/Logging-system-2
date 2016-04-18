@@ -3,6 +3,7 @@ package ru.medvedev.logging;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -18,7 +19,6 @@ public class LogManager {
     private Properties settings;
     private static Level defaultLevel;
     private static Logger rootLogger;
-    private static boolean updateConfig = false;
 
 
     {
@@ -54,21 +54,6 @@ public class LogManager {
 
         defaultLevel = Level.stringToLevel(settings.getProperty(".level"));
         rootLogger.setLoggerLevel(Level.stringToLevel(settings.getProperty(".level")));
-//        String[] h = separateClasses(settings.getProperty("handlers"));
-//        for (String s : h) {
-//            s = s.trim();
-//            try {
-//                Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s);
-//                clz.newInstance();
-//            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (InstantiationException e) {
-//                e.printStackTrace();
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
         String[] l = separateClasses(settings.getProperty("loggers"));
         HashMap<String, Logger> temp = new HashMap<>();
         for (String s : l) {
@@ -77,7 +62,9 @@ public class LogManager {
             logger.setLoggerLevel(Level.stringToLevel(settings.getProperty(s + ".level")));
             String[] h = separateClasses(settings.getProperty(s + ".handlers"));
             for (String s1 : h) {
+                s1 = s1.trim();
                 try {
+                    System.out.println("Class = " + s1);
                     Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s1);
                     Handler hand = (Handler) clz.newInstance();
                     if (hand instanceof FileHandler) {
@@ -117,20 +104,6 @@ public class LogManager {
         if (resultLogger == null) {
             resultLogger = new Logger(name);
             loggers.put(name, resultLogger);
-            if (updateConfig) {
-                int numberOfLoggers = Integer.parseInt(settings.getProperty("loggers"));
-                settings.put("loggers", Integer.valueOf(numberOfLoggers + 1).toString());
-                settings.put(Integer.valueOf(numberOfLoggers).toString(), name);
-                try {
-                    FileOutputStream stream = new FileOutputStream(propertiesFile);
-                    settings.store(stream, "");
-                    stream.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return resultLogger;
     }
@@ -141,14 +114,6 @@ public class LogManager {
 
     public static Logger getRootLogger() {
         return rootLogger;
-    }
-
-    public static boolean isUpdateConfig() {
-        return updateConfig;
-    }
-
-    public static void setUpdateConfig(boolean updateConfig) {
-        LogManager.updateConfig = updateConfig;
     }
 
     private String[] separateClasses(String s) {
@@ -163,7 +128,6 @@ public class LogManager {
 
     Formatter getFormatterProperty(String name, Formatter defaultValue) {
         String val = settings.getProperty(name);
-      //  System.out.println(name + " = " + val);
             if (val != null) {
                 Class<?> clz = null;
                 try {
@@ -180,7 +144,8 @@ public class LogManager {
         return defaultValue;
     }
 
-    public HashMap<String, Logger> getLoggers() {
-        return loggers;
+    public  void showLoggers() {
+        for (Map.Entry<String, Logger> entry: loggers.entrySet())
+            System.out.println(entry.getKey() + " = " + entry.getValue());
     }
 }

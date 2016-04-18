@@ -160,4 +160,15 @@ public class Logger {
     public void setLoggerLevel(Level loggerLevel) {
         this.loggerLevel = loggerLevel;
     }
+
+    @Override
+    public String toString() {
+        return "Logger{" +
+                "name='" + name + '\'' +
+                ", handlers=" + handlers +
+                ", filters=" + filters +
+                ", parent=" + parent +
+                ", loggerLevel=" + loggerLevel +
+                '}';
+    }
 }
