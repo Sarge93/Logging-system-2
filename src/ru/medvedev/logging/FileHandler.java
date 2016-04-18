@@ -46,7 +46,7 @@ public class FileHandler implements Handler {
     private void configure() {
         LogManager manager = LogManager.getLogManager();
         String cname = getClass().getName();
-        fullPath = manager.getStringProperty(cname + ".fullPath", System.getProperty("java.io.tmpdir"));
+        fullPath = manager.getStringProperty(cname + ".fullpath", System.getProperty("java.io.tmpdir"));
         setFormatter(manager.getFormatterProperty(cname + ".formatter", new SimpleFormatter()));
     }
 

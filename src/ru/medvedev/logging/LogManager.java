@@ -83,7 +83,7 @@ public class LogManager {
                     if (hand instanceof FileHandler) {
                         FileHandler filehandler = (FileHandler) hand;
                         filehandler.setFullPath(getStringProperty(s+"."+s1+".fullpath", System.getProperty("java.io.tmpdir")));
-                        filehandler.setFormatter(getFormatterProperty(s+"."+s1+".fullpath", new SimpleFormatter()));
+                        filehandler.setFormatter(getFormatterProperty(s+"."+s1+".formatter", new SimpleFormatter()));
                         logger.addHandler(filehandler);
                     }
                     if (hand instanceof ConsoleHandler) {
@@ -157,12 +157,13 @@ public class LogManager {
 
     String getStringProperty(String s, String defaultProp) {
         String prop = settings.getProperty(s);
-        if (s == null) return defaultProp;
+        if (prop == null) return defaultProp;
         return prop.trim();
     }
 
     Formatter getFormatterProperty(String name, Formatter defaultValue) {
         String val = settings.getProperty(name);
+      //  System.out.println(name + " = " + val);
             if (val != null) {
                 Class<?> clz = null;
                 try {
