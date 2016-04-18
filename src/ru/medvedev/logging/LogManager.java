@@ -30,8 +30,9 @@ public class LogManager {
         propertiesFile = new File(propertiesDir, "logging.properties");
 
         Properties defaultSettings = new Properties();
-        defaultSettings.put("level", "info");
-        defaultSettings.put("loggers", "0");
+        defaultSettings.put(".level", "info");
+        defaultSettings.put("handlers", "");
+        defaultSettings.put("loggers", "");
 
         settings = new Properties(defaultSettings);
 
@@ -49,11 +50,44 @@ public class LogManager {
         }
 
         defaultLevel = Level.stringToLevel(settings.getProperty("level"));
+        rootLogger.setLoggerLevel(Level.stringToLevel(settings.getProperty("level")));
+//        String[] h = separateClasses(settings.getProperty("handlers"));
+//        for (String s : h) {
+//            s = s.trim();
+//            try {
+//                Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s);
+//                clz.newInstance();
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (InstantiationException e) {
+//                e.printStackTrace();
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        String[] l = separateClasses(settings.getProperty("loggers"));
         HashMap<String, Logger> temp = new HashMap<>();
-        int numberOfLoggers = Integer.parseInt(settings.getProperty("loggers"));
-        for (int i = 0; i < numberOfLoggers; i++) {
-            String n = settings.getProperty(Integer.valueOf(i).toString());
-            temp.put(n, new Logger(n));
+        for (String s : l) {
+            s = s.trim();
+            Logger logger = new Logger(s);
+            logger.setLoggerLevel(Level.stringToLevel(settings.getProperty(s + ".level")));
+            String[] h = separateClasses(settings.getProperty(s + ".handlers"));
+            for (String s1 : h) {
+                try {
+                    Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s1);
+                    Handler hand = (Handler) clz.newInstance();
+                    if (hand instanceof FileHandler) {
+
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            temp.put(s, logger);
         }
         loggers = temp;
         temp = null;
@@ -72,19 +106,20 @@ public class LogManager {
         if (resultLogger == null) {
             resultLogger = new Logger(name);
             loggers.put(name, resultLogger);
-            int numberOfLoggers = Integer.parseInt(settings.getProperty("loggers"));
-            settings.put("loggers",Integer.valueOf(numberOfLoggers + 1).toString());
-            settings.put(Integer.valueOf(numberOfLoggers).toString(), name);
-            try {
-                FileOutputStream stream = new FileOutputStream(propertiesFile);
-                settings.store(stream, "");
-                stream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (updateConfig) {
+                int numberOfLoggers = Integer.parseInt(settings.getProperty("loggers"));
+                settings.put("loggers", Integer.valueOf(numberOfLoggers + 1).toString());
+                settings.put(Integer.valueOf(numberOfLoggers).toString(), name);
+                try {
+                    FileOutputStream stream = new FileOutputStream(propertiesFile);
+                    settings.store(stream, "");
+                    stream.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
         }
         return resultLogger;
     }
@@ -104,4 +139,32 @@ public class LogManager {
     public static void setUpdateConfig(boolean updateConfig) {
         LogManager.updateConfig = updateConfig;
     }
-}
+
+    private String[] separateClasses(String s) {
+        return s.split(",");
+    }
+
+    String getStringProperty(String s, String defaultProp) {
+        String prop = settings.getProperty(s);
+        if (s == null) return defaultProp;
+        return prop.trim();
+    }
+
+    Formatter getFormatterProperty(String name, Formatter defaultValue) {
+        String val = settings.getProperty(name);
+            if (val != null) {
+                Class<?> clz = null;
+                try {
+                    clz = ClassLoader.getSystemClassLoader().loadClass(val);
+                    return (Formatter) clz.newInstance();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        return defaultValue;
+    }
+ }

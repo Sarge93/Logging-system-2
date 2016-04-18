@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 public class FileHandler implements Handler {
 
     private String fullPath;
+    private Formatter formatter;
 
     private void write(String text) throws IOException {
         File file = new File(fullPath);
@@ -34,7 +35,19 @@ public class FileHandler implements Handler {
     }
 
     public FileHandler(String fullPath) throws IOException {
+        configure();
         this.fullPath = fullPath;
+    }
+
+    public FileHandler() {
+        configure();
+    }
+
+    private void configure() {
+        LogManager manager = LogManager.getLogManager();
+        String cname = getClass().getName();
+        fullPath = manager.getStringProperty(cname + ".fullPath", System.getProperty("java.io.tmpdir"));
+        setFormatter(manager.getFormatterProperty(cname + ".formatter", new SimpleFormatter()));
     }
 
     private String makeFormatString(Record record) {
@@ -53,5 +66,9 @@ public class FileHandler implements Handler {
         } catch (IOException e) {
             Logger.createLogger(getClass().getName()).log(Level.warning, "Ошибка ввода/вывода");
         }
+    }
+
+    public void setFormatter(Formatter formatter) {
+        this.formatter = formatter;
     }
 }

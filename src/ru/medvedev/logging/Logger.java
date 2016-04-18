@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Logger {
     private String name;
     private ArrayList<Handler> handlers = new ArrayList<Handler>();
-    private Filter filter;
+    private ArrayList<Filter> filters = new ArrayList<Filter>();
     private Logger parent;
     private Level loggerLevel;
 
@@ -33,12 +33,12 @@ public class Logger {
         this.parent = LogManager.getRootLogger();
     }
 
-    public void setFilter(Filter filter) {
-        this.filter = filter;
+    public void addFilter(Filter filter) {
+        filters.add(filter);
     }
 
-    public Filter getFilter() {
-        return filter;
+    public ArrayList<Filter> getFilter() {
+        return filters;
     }
 
     public void addHandler(Handler handler) {
@@ -52,39 +52,32 @@ public class Logger {
 
 
     public void log(Level level, String lodMsg) {
-        if (level.ordinal() < loggerLevel.ordinal()) {
-            return;
-        }
         Record record = new Record(level, lodMsg);
-        if ((filter != null) && (!filter.isLoggable(record))) {
-            return;
-        }
-
         doLog(record);
-
     }
 
     public void log(Level level, Exception ex) {
-        if (level.ordinal() < loggerLevel.ordinal()) {
-            return;
-        }
         Record record = new Record(level, transformExeption(ex));
-        if ((filter != null) && (!filter.isLoggable(record))) {
-            return;
-        }
         doLog(record);
     }
 
     private void doLog(Record record) {
+        if (record.getLevel().ordinal() < loggerLevel.ordinal()) {
+            return;
+        }
+        for (Filter filter : filters) {
+            if (!filter.isLoggable(record)) return;
+        }
+
         Logger logger = this;
 
         while (logger != null) {
-            if ((logger.getFilter() != null) && (!logger.getFilter().isLoggable(record))) {
-                return;
-            }
-            if (record.getLevel().ordinal() < logger.getLoggerLevel().ordinal()) {
-                return;
-            }
+//            if ((logger.getFilter() != null) && (!logger.getFilter().isLoggable(record))) {
+//                return;
+//            }
+//            if (record.getLevel().ordinal() < logger.getLoggerLevel().ordinal()) {
+//                return;
+//            }
             ArrayList<Handler> handlers = logger.getHandlers();
             for (Handler handler : handlers) {
                 handler.publish(logger, record);
