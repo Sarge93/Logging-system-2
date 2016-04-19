@@ -7,17 +7,12 @@ public class ConsoleHandler implements Handler {
 
     private Formatter formatter;
 
-    public void setFormatter(Formatter formatter) {
-        this.formatter = formatter;
+    public Formatter getFormatter() {
+        return formatter;
     }
 
-    private String makeFormatString(Record record) {
-        StringBuilder result = new StringBuilder();
-        result.append(record.getNum());
-        result.append(": " + record.getDate());
-        result.append(" --- " + record.getLevel());
-        result.append(": " + record.getMessage());
-        return result.toString();
+    public void setFormatter(Formatter formatter) {
+        this.formatter = formatter;
     }
 
     public ConsoleHandler() {
@@ -32,6 +27,6 @@ public class ConsoleHandler implements Handler {
 
     @Override
     public void publish(Logger logger, Record record) {
-        System.out.println(makeFormatString(record));
+        System.out.println(formatter.format(record));
     }
 }

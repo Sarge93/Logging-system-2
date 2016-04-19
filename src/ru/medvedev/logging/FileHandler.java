@@ -50,19 +50,10 @@ public class FileHandler implements Handler {
         setFormatter(manager.getFormatterProperty(cname + ".formatter", new SimpleFormatter()));
     }
 
-    private String makeFormatString(Record record) {
-        StringBuilder result = new StringBuilder();
-        result.append(record.getNum());
-        result.append(": " + record.getDate());
-        result.append(" --- " + record.getLevel());
-        result.append(": " + record.getMessage());
-        return result.toString();
-    }
-
     @Override
     public void publish(Logger logger, Record record) {
         try {
-            this.write(makeFormatString(record));
+            this.write(formatter.format(record));
         } catch (IOException e) {
             Logger.createLogger(getClass().getName()).log(Level.warning, "Ошибка ввода/вывода");
         }

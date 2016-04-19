@@ -11,7 +11,7 @@ public class Logger {
     private ArrayList<Handler> handlers = new ArrayList<Handler>();
     private ArrayList<Filter> filters = new ArrayList<Filter>();
     private Logger parent;
-    private Level loggerLevel;
+    private Level loggerLevel = Level.info;
 
     public String getName() {
         return name;
@@ -62,6 +62,7 @@ public class Logger {
     }
 
     private void doLog(Record record) {
+        if (loggerLevel == null) loggerLevel = Level.info;
         if (record.getLevel().ordinal() < loggerLevel.ordinal()) {
             return;
         }

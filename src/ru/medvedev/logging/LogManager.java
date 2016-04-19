@@ -14,9 +14,9 @@ import java.util.Properties;
 public class LogManager {
     private final static LogManager logManager = new LogManager();
 
-    private HashMap<String, Logger> loggers;
+    private HashMap<String, Logger> loggers = new HashMap<>();
     private File propertiesFile;
-    private Properties settings;
+    private Properties settings = new Properties();
     private static Level defaultLevel;
     private static Logger rootLogger;
 
