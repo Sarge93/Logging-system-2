@@ -1,5 +1,7 @@
 package ru.medvedev.logging;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by Сергей on 18.04.2016.
  */
@@ -33,7 +35,21 @@ public class SimpleFormatter implements Formatter {
         for (int i = 0; i < format.length(); i++) {
             if (format.charAt(i) == '%') continue;
             if (format.charAt(i) == '1') {
-                result.append(record.getDate());
+                if (format.charAt(i + 1) == '{') {
+                    StringBuilder temp = new StringBuilder();
+                    int num = 0;
+                    for (int j = i+2;;j++) {
+                        if (format.charAt(j) == '}') break;
+                        temp.append(format.charAt(j));
+                        num = j;
+                    }
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(temp.toString());
+                    String date = dateFormat.format(record.getDate());
+                    result.append(date);
+                    i = num + 1;
+                } else {
+                    result.append(record.getDate());
+                }
             } else if (format.charAt(i) == '2') {
                 result.append(record.getLevel());
             } else if (format.charAt(i) == '3') {
@@ -52,7 +68,7 @@ public class SimpleFormatter implements Formatter {
 }
 
 
-//Example: %1 %2%n%4: %3
+//Example: %1{dd-MM-yy:HH:mm:SS} %2%n%4: %3
 
 //%1 - time stamp
 //%2 - level
