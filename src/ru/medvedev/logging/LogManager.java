@@ -64,7 +64,6 @@ public class LogManager {
             for (String s1 : h) {
                 s1 = s1.trim();
                 try {
-                    System.out.println("Class = " + s1);
                     Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s1);
                     Handler hand = (Handler) clz.newInstance();
                     if (hand instanceof FileHandler) {
@@ -91,7 +90,8 @@ public class LogManager {
                 s1 = s1.trim();
                 try {
                     Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s1);
-                    Filter hand = (Filter) clz.newInstance();
+                    Filter filt = (Filter) clz.newInstance();
+                    logger.addFilter(filt);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (InstantiationException e) {
@@ -131,6 +131,7 @@ public class LogManager {
     }
 
     private String[] separateClasses(String s) {
+        if (s == null) return new String[0];
         return s.split(",");
     }
 

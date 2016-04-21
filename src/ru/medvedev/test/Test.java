@@ -10,11 +10,7 @@ import ru.medvedev.logging.Logger;
  */
 public class Test {
     public static void main(String[] args) {
-        Logger logger = Logger.createLogger("SuperLogger");
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(new SimpleFormatter());
-        ((SimpleFormatter)consoleHandler.getFormatter()).setPattern("%1{dd-MM-yy:HH:mm:SS} %2%n%4: %3");
-        logger.addHandler(consoleHandler);
-        logger.info("123");
+        LogManager.getLogManager().readConfiguration();
+        LogManager.getLogManager().showLoggers();
     }
 }
