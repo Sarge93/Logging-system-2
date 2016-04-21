@@ -86,6 +86,20 @@ public class LogManager {
                     e.printStackTrace();
                 }
             }
+            String[] f = separateClasses(settings.getProperty(s + ".filters"));
+            for (String s1 : f) {
+                s1 = s1.trim();
+                try {
+                    Class<?> clz = ClassLoader.getSystemClassLoader().loadClass(s1);
+                    Filter hand = (Filter) clz.newInstance();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
             temp.put(s, logger);
         }
         loggers = temp;
